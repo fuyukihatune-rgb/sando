@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>参道 — 四国八十八ヶ所</title>
+<meta name="description" content="四国八十八ヶ所を巡る、物理巡礼の同行アプリ。記録はすべて端末の中に。" />
+<meta name="theme-color" content="#0f0f0f" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="参道" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./icons/icon-192.png" />
+<style>
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #0f0f0f;
+  --surface:   #191917;
+  --surface2:  #211f1c;
+  --border:    #2e2b26;
+  --text:      #e8e4dc;
+  --text2:     #8a8278;
+  --text3:     #50493f;
+  --gold:      #c4974a;
+  --gold-soft: rgba(196,151,74,0.14);
+  --gold-dim:  rgba(196,151,74,0.35);
+}
+html { background: var(--bg); color: var(--text); font-family: -apple-system, "Helvetica Neue", "Noto Sans JP", sans-serif; -webkit-font-smoothing: antialiased; min-height: 100dvh; font-size: 16px; line-height: 1.7; }
+body { padding-top: calc(env(safe-area-inset-top,0px) + 52px); padding-bottom: calc(env(safe-area-inset-bottom,0px) + 64px); }
+#app { max-width: 480px; margin: 0 auto; }
+
+/* ── Top bar ── */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top,0px) + 10px) 18px 10px; min-height: calc(env(safe-area-inset-top,0px) + 52px); }
+.topbar-logo { font-size: 18px; font-weight: 900; letter-spacing: 0.12em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.top-btn { background: none; border: none; color: var(--text2); font-size: 22px; cursor: pointer; padding: 4px; font-family: inherit; line-height: 1; }
+.topbar-sub { font-size: 11px; color: var(--text3); }
+
+/* ── Bottom nav ── */
+.bottomnav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-top: 1px solid var(--border); display: flex; padding-bottom: env(safe-area-inset-bottom,0px); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 10px 0; cursor: pointer; border: none; background: none; color: var(--text3); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; transition: color 0.15s; font-family: inherit; }
+.nav-btn svg { width: 22px; height: 22px; }
+.nav-btn.active { color: var(--gold); }
+
+/* ── Screen ── */
+.screen { padding: 16px; }
+
+/* ── Dojo section ── */
+.dojo-section { margin-bottom: 28px; }
+.dojo-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.dojo-name { font-size: 18px; font-weight: 900; letter-spacing: 0.06em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.dojo-kana { font-size: 11px; color: var(--text3); }
+.dojo-pref { font-size: 11px; color: var(--text3); margin-left: auto; }
+.dojo-progress { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 14px; overflow: hidden; }
+.dojo-progress-bar { height: 100%; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
+
+/* ── Temple row ── */
+.temple-row { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+.temple-row:last-child { border-bottom: none; }
+.temple-row:active { opacity: 0.7; }
+.temple-num { font-size: 13px; color: var(--text3); min-width: 26px; font-variant-numeric: tabular-nums; text-align: right; }
+.temple-mark { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 900; color: transparent; transition: background 0.3s, border-color 0.3s, color 0.3s; }
+.temple-mark.visited { background: var(--gold); border-color: var(--gold); color: #0f0f0f; }
+.temple-name-wrap { flex: 1; }
+.temple-name { font-size: 15px; font-weight: 700; }
+.temple-name.empty { color: var(--text3); font-weight: 600; font-style: italic; }
+.temple-arrow { color: var(--text3); font-size: 14px; }
+
+/* ── Temple detail ── */
+.detail-header { text-align: center; padding: 32px 0 24px; }
+.detail-num { font-size: 13px; color: var(--text3); letter-spacing: 0.06em; }
+.detail-name { font-size: 26px; font-weight: 900; margin-top: 6px; letter-spacing: 0.04em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.detail-name.empty { color: var(--text3); font-size: 18px; }
+.detail-dojo { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 10px; }
+.detail-honzon { font-size: 13px; color: var(--text2); margin-top: 12px; text-align: center; }
+.detail-visited { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
+.detail-visited-date { font-size: 12px; color: var(--text2); }
+.detail-visited-note { font-size: 14px; margin-top: 6px; }
+.detail-stamp { width: 72px; height: 72px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; color: #0f0f0f; margin: 20px auto 8px; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+
+/* ── Buttons ── */
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 800; cursor: pointer; transition: opacity 0.15s, transform 0.1s; font-family: inherit; letter-spacing: 0.03em; }
+.btn:active { opacity: 0.82; transform: scale(0.98); }
+.btn-primary { background: var(--gold); color: #0f0f0f; }
+.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); font-weight: 600; }
+.btn-danger { background: transparent; color: #c05050; border: 1px solid rgba(192,80,80,0.25); font-weight: 600; }
+.btn-sm { font-size: 14px; padding: 11px; }
+
+/* ── Breathe screen ── */
+.breathe-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65dvh; text-align: center; }
+.breathe-title { font-size: 15px; color: var(--text2); margin-bottom: 40px; line-height: 2; }
+.breathe-circle { width: 120px; height: 120px; border-radius: 50%; border: 1.5px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { transform: scale(1); border-color: var(--gold-dim); }
+  50% { transform: scale(1.12); border-color: var(--gold); }
+}
+@media (prefers-reduced-motion: reduce) { .breathe-circle { animation: none; } }
+.breathe-inner { width: 40px; height: 40px; border-radius: 50%; background: var(--gold-soft); border: 1px solid var(--gold-dim); }
+
+/* ── Note screen ── */
+.note-heading { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 20px; line-height: 2; }
+.note-field { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; padding: 14px; outline: none; font-family: inherit; resize: none; height: 120px; line-height: 1.7; transition: border-color 0.15s; }
+.note-field:focus { border-color: var(--gold-dim); }
+.note-char { text-align: right; font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+/* ── 納経帳 ── */
+.kecho-intro { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 20px; line-height: 1.9; }
+.kecho-dojo { margin-bottom: 24px; }
+.kecho-dojo-name { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; margin-bottom: 10px; }
+.kecho-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.kecho-cell { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: var(--text3); cursor: pointer; transition: background 0.25s, border-color 0.25s, color 0.25s; position: relative; }
+.kecho-cell:active { opacity: 0.7; }
+.kecho-cell.visited { background: var(--gold); border-color: var(--gold); color: #0f0f0f; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.kecho-cell .cell-num { font-size: 8px; position: absolute; top: 3px; left: 0; right: 0; text-align: center; opacity: 0.6; }
+.kecho-cell.visited .cell-num { opacity: 0; }
+.kecho-total { text-align: center; margin-top: 10px; font-size: 12px; color: var(--text3); }
+
+/* ── 結願 ── */
+.kechigan { text-align: center; padding: 32px 0; border: 1px solid var(--gold-dim); border-radius: 16px; margin-bottom: 20px; }
+.kechigan-mark { font-size: 40px; font-family: "Noto Serif JP", "Yu Mincho", serif; font-weight: 900; color: var(--gold); }
+.kechigan-title { font-size: 20px; font-weight: 800; margin-top: 12px; letter-spacing: 0.06em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.kechigan-desc { font-size: 13px; color: var(--text2); margin-top: 12px; line-height: 1.9; padding: 0 16px; }
+
+/* ── ことわり ── */
+.disclaimer { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; font-size: 13px; color: var(--text2); line-height: 2.0; }
+.disclaimer-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 12px; letter-spacing: 0.04em; }
+
+/* ── Terms first launch ── */
+.terms-hero { text-align: center; padding: 40px 0 28px; }
+.terms-logo { font-size: 36px; font-weight: 900; letter-spacing: 0.12em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.terms-tagline { font-size: 13px; color: var(--text3); margin-top: 8px; }
+.terms-sub { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 18px; line-height: 1.9; }
+
+/* ── Misc ── */
+.section-lbl { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; margin: 24px 0 10px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 12px; }
+.row { margin-bottom: 14px; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--gold); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+
+/* ── Temple data ──
+   出典：四国八十八ヶ所霊場会公式情報に基づく
+   HONZON は任意。人間が公式情報から確認・追記すること。
+   ────────────────────────────────── */
+const NAMES = {
+   1:'霊山寺',   2:'極楽寺',   3:'金泉寺',   4:'大日寺',   5:'地蔵寺',
+   6:'安楽寺',   7:'十楽寺',   8:'熊谷寺',   9:'法輪寺',  10:'切幡寺',
+  11:'藤井寺',  12:'焼山寺',  13:'大日寺',  14:'常楽寺',  15:'国分寺',
+  16:'観音寺',  17:'井戸寺',  18:'恩山寺',  19:'立江寺',  20:'鶴林寺',
+  21:'太龍寺',  22:'平等寺',  23:'薬王寺',  24:'最御崎寺', 25:'津照寺',
+  26:'金剛頂寺', 27:'神峯寺',  28:'大日寺',  29:'国分寺',  30:'善楽寺',
+  31:'竹林寺',  32:'禅師峰寺', 33:'雪蹊寺',  34:'種間寺',  35:'清滝寺',
+  36:'青龍寺',  37:'岩本寺',  38:'金剛福寺', 39:'延光寺',  40:'観自在寺',
+  41:'龍光寺',  42:'仏木寺',  43:'明石寺',  44:'大寶寺',  45:'岩屋寺',
+  46:'浄瑠璃寺', 47:'八坂寺',  48:'西林寺',  49:'浄土寺',  50:'繁多寺',
+  51:'石手寺',  52:'太山寺',  53:'圓明寺',  54:'延命寺',  55:'南光坊',
+  56:'泰山寺',  57:'栄福寺',  58:'仙遊寺',  59:'国分寺',  60:'横峰寺',
+  61:'香園寺',  62:'宝寿寺',  63:'吉祥寺',  64:'前神寺',  65:'三角寺',
+  66:'雲辺寺',  67:'大興寺',  68:'神恵院',  69:'観音寺',  70:'本山寺',
+  71:'弥谷寺',  72:'曼荼羅寺', 73:'出釈迦寺', 74:'甲山寺',  75:'善通寺',
+  76:'金倉寺',  77:'道隆寺',  78:'郷照寺',  79:'天皇寺',  80:'国分寺',
+  81:'白峯寺',  82:'根香寺',  83:'一宮寺',  84:'屋島寺',  85:'八栗寺',
+  86:'志度寺',  87:'長尾寺',  88:'大窪寺',
+};
+
+/* 本尊 — 人間が公式情報から確認・追記してください */
+const HONZON = {
+  /* 例: 1:'釈迦如来', 2:'阿弥陀如来', ... */
+};
+
+const DOJOS = [
+  { name:'発心', kana:'ほっしん', pref:'阿波・徳島', start:1,  end:23 },
+  { name:'修行', kana:'しゅぎょう', pref:'土佐・高知', start:24, end:39 },
+  { name:'菩提', kana:'ぼだい',  pref:'伊予・愛媛', start:40, end:65 },
+  { name:'涅槃', kana:'ねはん',  pref:'讃岐・香川', start:66, end:88 },
+];
+
+function dojoOf(n) {
+  return DOJOS.find(d => n >= d.start && n <= d.end) || DOJOS[0];
+}
+
+/* ── Storage ── */
+const STORAGE = 'sando_v1';
+const TERMS_VER = 1;
+let state = { termsVer: 0, visits: {} };
+
+function loadState() {
+  try { const r = localStorage.getItem(STORAGE); if (r) state = { ...state, ...JSON.parse(r) }; } catch {}
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch {}
+}
+
+/* ── Helpers ── */
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+function totalVisited() { return Object.keys(state.visits).length; }
+function isVisited(n) { return !!state.visits[n]; }
+
+function recordVisit(n, note) {
+  state.visits[n] = { date: new Date().toISOString().slice(0,10), note: note || '' };
+  saveState();
+}
+function removeVisit(n) {
+  delete state.visits[n];
+  saveState();
+}
+
+/* ── Navigation ── */
+let view = { tab: 'list', screen: 'list', templeN: null, flowNote: '' };
+
+function go(screen, opts) {
+  view = { ...view, screen, ...(opts||{}) };
+  render();
+}
+function goTab(tab) {
+  view = { ...view, tab, screen: tab, templeN: null };
+  render();
+}
+
+/* ── Escape ── */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Main render ── */
+function render() {
+  const app = document.getElementById('app');
+  if (state.termsVer < TERMS_VER) { app.innerHTML = screenTerms(); return; }
+  switch (view.screen) {
+    case 'list':     app.innerHTML = screenList(); break;
+    case 'stamp':    app.innerHTML = screenStamp(); break;
+    case 'disc':     app.innerHTML = screenDisc(); break;
+    case 'temple':   app.innerHTML = screenTemple(view.templeN); break;
+    case 'breathe':  app.innerHTML = screenBreathe(view.templeN); break;
+    case 'note':     app.innerHTML = screenNote(view.templeN); break;
+    case 'done':     app.innerHTML = screenDone(view.templeN); break;
+    default:         app.innerHTML = screenList();
+  }
+}
+
+/* ── Nav HTML ── */
+function navHTML() {
+  const t = view.tab;
+  return `
+    <nav class="bottomnav" role="navigation" aria-label="メインナビゲーション">
+      <button class="nav-btn${t==='list'?' active':''}" onclick="goTab('list')" aria-label="札所一覧">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+          <line x1="8" y1="18" x2="21" y2="18"/>
+          <circle cx="3.5" cy="6" r="1.5" fill="currentColor" stroke="none"/>
+          <circle cx="3.5" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+          <circle cx="3.5" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+        札所
+      </button>
+      <button class="nav-btn${t==='stamp'?' active':''}" onclick="goTab('stamp')" aria-label="納経帳">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M9 12h6M12 9v6" stroke-width="2.5"/>
+        </svg>
+        納経帳
+      </button>
+      <button class="nav-btn${t==='disc'?' active':''}" onclick="goTab('disc')" aria-label="ことわり">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="9"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <circle cx="12" cy="16" r="0.8" fill="currentColor" stroke="none"/>
+        </svg>
+        ことわり
+      </button>
+    </nav>`;
+}
+
+/* ── Terms (初回) ── */
+function screenTerms() {
+  return `
+    <div class="topbar"><span class="topbar-logo">参道</span><span></span><span></span></div>
+    <div class="screen">
+      <div class="terms-hero">
+        <div class="terms-logo">参道</div>
+        <div class="terms-tagline">同行二人。ひとりではなく。</div>
+      </div>
+      <p class="terms-sub">四国八十八ヶ所を巡る、物理巡礼の同行アプリです。<br>記録と連れ。参拝の代わりではありません。</p>
+      <div class="disclaimer" style="margin-bottom:20px">
+        <div class="disclaimer-title">ことわり</div>
+        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は四国八十八ヶ所霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
+      </div>
+      <button class="btn btn-primary" onclick="agreeTerms()">同行をはじめる</button>
+    </div>`;
+}
+
+function agreeTerms() { state.termsVer = TERMS_VER; saveState(); go('list'); }
+
+/* ── 札所一覧 ── */
+function screenList() {
+  const total = totalVisited();
+  const currentDojo = DOJOS.find(d => {
+    for (let n = d.start; n <= d.end; n++) if (!isVisited(n)) return true;
+    return false;
+  }) || DOJOS[3];
+
+  const dojoBlocks = DOJOS.map(d => {
+    let visited = 0;
+    const rows = [];
+    for (let n = d.start; n <= d.end; n++) {
+      const name = NAMES[n];
+      const v = isVisited(n);
+      if (v) visited++;
+      rows.push(`
+        <div class="temple-row" onclick="go('temple',{templeN:${n}})" tabindex="0"
+             onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})"
+             role="button" aria-label="第${n}番 ${name||'札所名未入力'}${v?'（参拝済み）':''}">
+          <span class="temple-num">${n}</span>
+          <span class="temple-mark${v?' visited':''}">納</span>
+          <span class="temple-name-wrap">
+            <span class="temple-name${name?'':' empty'}">${name ? esc(name) : '（札所名 未入力）'}</span>
+          </span>
+          <span class="temple-arrow">›</span>
+        </div>`);
+    }
+    const pct = Math.round(visited / (d.end - d.start + 1) * 100);
+    return `
+      <div class="dojo-section">
+        <div class="dojo-head">
+          <span class="dojo-name">${d.name}</span>
+          <span class="dojo-kana">の道場</span>
+          <span class="dojo-pref">${d.pref}</span>
+        </div>
+        <div class="dojo-progress" role="progressbar" aria-valuenow="${visited}" aria-valuemax="${d.end-d.start+1}" aria-label="${d.name}の道場 ${visited}/${d.end-d.start+1}">
+          <div class="dojo-progress-bar" style="width:${pct}%"></div>
+        </div>
+        ${rows.join('')}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="topbar">
+      <span class="topbar-logo">参道</span>
+      <span></span>
+      <span class="topbar-sub">${total} / 88</span>
+    </div>
+    <div class="screen">
+      ${total === 0 ? `<p style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px;line-height:1.9">同行二人。ひとりではなく、ご一緒しましょう。<br>お参りした寺院を記録してください。</p>` : ''}
+      ${dojoBlocks}
+    </div>
+    ${navHTML()}`;
+}
+
+/* ── 札所詳細 ── */
+function screenTemple(n) {
+  const name = NAMES[n];
+  const honzon = HONZON[n];
+  const dojo = dojoOf(n);
+  const v = state.visits[n];
+
+  const visitedBlock = v ? `
+    <div style="text-align:center;margin-top:8px">
+      <div class="detail-stamp">納</div>
+      <div style="font-size:12px;color:var(--text3)">${fmtDate(v.date)}</div>
+    </div>
+    ${v.note ? `<div class="detail-visited" style="margin-top:14px"><div class="detail-visited-note">${esc(v.note)}</div></div>` : ''}
+    <div style="margin-top:24px">
+      <button class="btn btn-ghost btn-sm" onclick="go('breathe',{templeN:${n}})">もう一度 お参りする</button>
+    </div>
+    <div style="margin-top:10px">
+      <button class="btn btn-danger btn-sm" onclick="confirmRemove(${n})">参拝を取り消す</button>
+    </div>` : `
+    <div style="margin-top:28px">
+      <button class="btn btn-primary" onclick="go('breathe',{templeN:${n}})">お参りする</button>
+    </div>`;
+
+  return `
+    <div class="topbar">
+      <button class="top-btn" onclick="go('list')" aria-label="一覧に戻る">‹</button>
+      <span class="topbar-sub">第${n}番札所</span>
+      <span></span>
+    </div>
+    <div class="screen">
+      <div class="detail-header">
+        <div class="detail-num">第 ${n} 番</div>
+        <div class="detail-name${name?'':' empty'}">${name ? esc(name) : '（札所名 未入力）'}</div>
+        <div style="margin-top:8px">
+          <span class="detail-dojo">${dojo.name}の道場・${dojo.pref}</span>
+        </div>
+        ${honzon ? `<div class="detail-honzon">本尊：${esc(honzon)}</div>` : ''}
+      </div>
+      ${visitedBlock}
+    </div>`;
+}
+
+function confirmRemove(n) {
+  const name = NAMES[n] || `第${n}番`;
+  if (confirm(`${name}の参拝記録を取り消しますか？`)) {
+    removeVisit(n);
+    go('temple', { templeN: n });
+  }
+}
+
+/* ── 一呼吸 ── */
+function screenBreathe(n) {
+  const name = NAMES[n];
+  return `
+    <div class="topbar">
+      <button class="top-btn" onclick="go('temple',{templeN:${n}})" aria-label="戻る">‹</button>
+      <span class="topbar-sub">第${n}番 ${name ? esc(name) : ''}</span>
+      <span></span>
+    </div>
+    <div class="screen">
+      <div class="breathe-wrap">
+        <p class="breathe-title">お参りの前に、<br>ひとつ呼吸をおいて。</p>
+        <div class="breathe-circle" aria-hidden="true">
+          <div class="breathe-inner"></div>
+        </div>
+        <button class="btn btn-primary" style="max-width:200px" onclick="go('note',{templeN:${n}})">おく</button>
+      </div>
+    </div>`;
+}
+
+/* ── 一言記帳 ── */
+function screenNote(n) {
+  const name = NAMES[n];
+  return `
+    <div class="topbar">
+      <button class="top-btn" onclick="go('breathe',{templeN:${n}})" aria-label="戻る">‹</button>
+      <span class="topbar-sub">第${n}番 ${name ? esc(name) : ''}</span>
+      <span></span>
+    </div>
+    <div class="screen">
+      <p class="note-heading">ひとこと、記帳する。<br><span style="font-size:12px">書かなくても構いません。</span></p>
+      <textarea class="note-field" id="note-field" maxlength="200" placeholder="ひとこと（任意）" oninput="updateChar()" aria-label="一言記帳"></textarea>
+      <div class="note-char" id="note-char">0 / 200</div>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" onclick="submitNote(${n}, true)">参拝した</button>
+        <button class="btn btn-ghost btn-sm" onclick="submitNote(${n}, false)">何も書かず参拝する</button>
+      </div>
+    </div>`;
+}
+
+function updateChar() {
+  const f = document.getElementById('note-field');
+  const c = document.getElementById('note-char');
+  if (f && c) c.textContent = `${f.value.length} / 200`;
+}
+
+function submitNote(n, withNote) {
+  const note = withNote ? (document.getElementById('note-field')?.value.trim() || '') : '';
+  recordVisit(n, note);
+  go('done', { templeN: n });
+}
+
+/* ── 完了 ── */
+function screenDone(n) {
+  const name = NAMES[n];
+  const total = totalVisited();
+  const isKechigan = total === 88;
+  const dojo = dojoOf(n);
+
+  const dojoVisited = [];
+  for (let i = dojo.start; i <= dojo.end; i++) if (isVisited(i)) dojoVisited.push(i);
+  const dojoComplete = dojoVisited.length === (dojo.end - dojo.start + 1);
+
+  return `
+    <div class="topbar">
+      <span class="topbar-logo">参道</span><span></span><span></span>
+    </div>
+    <div class="screen" style="text-align:center;padding-top:32px">
+      <div class="detail-stamp" style="margin:0 auto 16px">納</div>
+      <div style="font-size:18px;font-weight:800;letter-spacing:0.04em">${name ? esc(name) : `第${n}番`}</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:6px">第 ${n} 番</div>
+      ${dojoComplete && !isKechigan ? `<p style="font-size:13px;color:var(--gold);margin-top:18px;line-height:1.9">${dojo.name}の道場、満ちました。</p>` : ''}
+      ${isKechigan ? kechiganHTML() : ''}
+      <div style="margin-top:32px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" onclick="go('temple',{templeN:${n}})">札所詳細へ</button>
+        <button class="btn btn-ghost btn-sm" onclick="goTab('list')">一覧に戻る</button>
+      </div>
+    </div>
+    ${navHTML()}`;
+}
+
+function kechiganHTML() {
+  return `
+    <div class="kechigan" style="margin-top:24px">
+      <div class="kechigan-mark">結願</div>
+      <div class="kechigan-title">八十八ヶ所、満ちました。</div>
+      <p class="kechigan-desc">お礼参りとして、高野山奥の院（和歌山県高野町）へのお参りが伝統とされています。弘法大師空海が今もご入定されているとされる聖地です。四国霊場会の公式案内をご参照ください。</p>
+    </div>`;
+}
+
+/* ── 納経帳 ── */
+function screenStamp() {
+  const total = totalVisited();
+  const isKechigan = total === 88;
+
+  const dojoBlocks = DOJOS.map(d => {
+    let cells = '';
+    for (let n = d.start; n <= d.end; n++) {
+      const v = isVisited(n);
+      cells += `
+        <div class="kecho-cell${v?' visited':''}" onclick="go('temple',{templeN:${n}})"
+             tabindex="0" onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})"
+             role="button" aria-label="第${n}番${v?'（参拝済み）':''}">
+          ${v ? '納' : `<span class="cell-num">${n}</span>`}
+        </div>`;
+    }
+    const dv = Array.from({length: d.end-d.start+1}, (_,i)=>d.start+i).filter(n=>isVisited(n)).length;
+    return `
+      <div class="kecho-dojo">
+        <div class="kecho-dojo-name">${d.name}の道場 — ${d.pref}　${dv}/${d.end-d.start+1}</div>
+        <div class="kecho-grid">${cells}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="topbar">
+      <span class="topbar-logo">参道</span>
+      <span></span>
+      <span class="topbar-sub">${total} / 88</span>
+    </div>
+    <div class="screen">
+      ${isKechigan ? kechiganHTML() : `<p class="kecho-intro">お参りした札所が、静かに満ちていきます。</p>`}
+      ${dojoBlocks}
+      <div class="kecho-total">${total} ヶ所 お参りしました</div>
+    </div>
+    ${navHTML()}`;
+}
+
+/* ── ことわり ── */
+function screenDisc() {
+  return `
+    <div class="topbar">
+      <span class="topbar-logo">参道</span><span></span><span></span>
+    </div>
+    <div class="screen">
+      <div class="section-lbl">ことわり</div>
+      <div class="disclaimer">
+        <div class="disclaimer-title">このアプリについて</div>
+        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は四国八十八ヶ所霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
+      </div>
+      <div class="section-lbl" style="margin-top:24px">開発</div>
+      <div class="card" style="font-size:13px;color:var(--text2);line-height:1.9">
+        Ataraxia Works — 田中志（たなかしるす）<br>
+        四国八十八ヶ所霊場会および各寺院は、このアプリと無関係です。<br>
+        <span style="color:var(--text3)">© 2026 田中志 / Ataraxia Works</span>
+      </div>
+      <div class="section-lbl">記録のリセット</div>
+      <button class="btn btn-danger btn-sm" onclick="confirmReset()" style="max-width:240px">すべての記録を消去する</button>
+    </div>
+    ${navHTML()}`;
+}
+
+function confirmReset() {
+  if (confirm('すべての参拝記録を消去しますか？この操作は取り消せません。')) {
+    state.visits = {};
+    saveState();
+    goTab('disc');
+  }
+}
+
+/* ── PWA ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+
+/* ── Boot ── */
+loadState();
+render();
+</script>
+</body>
+</html>
