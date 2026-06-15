@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>参道 — 四国八十八ヶ所</title>
-<meta name="description" content="四国八十八ヶ所を巡る、物理巡礼の同行アプリ。記録はすべて端末の中に。" />
+<title>参道 — 巡礼の同行</title>
+<meta name="description" content="四国八十八ヶ所をはじめ、各地の霊場巡礼を記録する同行アプリ。端末内完結。" />
 <meta name="theme-color" content="#0f0f0f" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -25,18 +25,22 @@
   --text2:     #8a8278;
   --text3:     #50493f;
   --gold:      #c4974a;
-  --gold-soft: rgba(196,151,74,0.14);
-  --gold-dim:  rgba(196,151,74,0.35);
+  --gold-soft: rgba(196,151,74,0.13);
+  --gold-dim:  rgba(196,151,74,0.32);
+  --red-dim:   rgba(192,80,80,0.25);
 }
 html { background: var(--bg); color: var(--text); font-family: -apple-system, "Helvetica Neue", "Noto Sans JP", sans-serif; -webkit-font-smoothing: antialiased; min-height: 100dvh; font-size: 16px; line-height: 1.7; }
-body { padding-top: calc(env(safe-area-inset-top,0px) + 52px); padding-bottom: calc(env(safe-area-inset-bottom,0px) + 64px); }
+body { padding-top: calc(env(safe-area-inset-top,0px) + 56px); padding-bottom: calc(env(safe-area-inset-bottom,0px) + 64px); }
 #app { max-width: 480px; margin: 0 auto; }
 
-/* ── Top bar ── */
-.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top,0px) + 10px) 18px 10px; min-height: calc(env(safe-area-inset-top,0px) + 52px); }
-.topbar-logo { font-size: 18px; font-weight: 900; letter-spacing: 0.12em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
-.top-btn { background: none; border: none; color: var(--text2); font-size: 22px; cursor: pointer; padding: 4px; font-family: inherit; line-height: 1; }
-.topbar-sub { font-size: 11px; color: var(--text3); }
+/* ── Topbar ── */
+.topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: calc(env(safe-area-inset-top,0px) + 10px) 16px 10px; min-height: calc(env(safe-area-inset-top,0px) + 56px); gap: 8px; }
+.topbar-logo { font-size: 17px; font-weight: 900; letter-spacing: 0.1em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; flex-shrink: 0; }
+.topbar-route { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding: 4px 8px; border-radius: 8px; transition: background 0.15s; border: none; background: none; color: var(--text2); font-size: 12px; font-family: inherit; }
+.topbar-route:hover { background: var(--surface); }
+.topbar-route-name { font-weight: 700; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-sub { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+.top-btn { background: none; border: none; color: var(--text2); font-size: 22px; cursor: pointer; padding: 4px; font-family: inherit; line-height: 1; flex-shrink: 0; }
 
 /* ── Bottom nav ── */
 .bottomnav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--bg); border-top: 1px solid var(--border); display: flex; padding-bottom: env(safe-area-inset-bottom,0px); }
@@ -48,97 +52,112 @@ body { padding-top: calc(env(safe-area-inset-top,0px) + 52px); padding-bottom: c
 .screen { padding: 16px; }
 
 /* ── Dojo section ── */
-.dojo-section { margin-bottom: 28px; }
-.dojo-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
-.dojo-name { font-size: 18px; font-weight: 900; letter-spacing: 0.06em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.dojo-section { margin-bottom: 26px; }
+.dojo-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.dojo-name { font-size: 17px; font-weight: 900; letter-spacing: 0.06em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
 .dojo-kana { font-size: 11px; color: var(--text3); }
 .dojo-pref { font-size: 11px; color: var(--text3); margin-left: auto; }
-.dojo-progress { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 14px; overflow: hidden; }
-.dojo-progress-bar { height: 100%; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
+.dojo-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 12px; overflow: hidden; }
+.dojo-bar-fill { height: 100%; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
 
 /* ── Temple row ── */
-.temple-row { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+.temple-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
 .temple-row:last-child { border-bottom: none; }
-.temple-row:active { opacity: 0.7; }
+.temple-row:active { opacity: 0.65; }
 .temple-num { font-size: 13px; color: var(--text3); min-width: 26px; font-variant-numeric: tabular-nums; text-align: right; }
-.temple-mark { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 900; color: transparent; transition: background 0.3s, border-color 0.3s, color 0.3s; }
-.temple-mark.visited { background: var(--gold); border-color: var(--gold); color: #0f0f0f; }
-.temple-name-wrap { flex: 1; }
-.temple-name { font-size: 15px; font-weight: 700; }
-.temple-name.empty { color: var(--text3); font-weight: 600; font-style: italic; }
+.temple-mark { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; font-weight: 900; color: transparent; transition: background 0.3s, border-color 0.3s, color 0.3s; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.temple-mark.v { background: var(--gold); border-color: var(--gold); color: #0f0f0f; }
+.temple-name { flex: 1; font-size: 15px; font-weight: 700; }
+.temple-name.empty { color: var(--text3); font-weight: 600; font-style: italic; font-size: 13px; }
 .temple-arrow { color: var(--text3); font-size: 14px; }
 
 /* ── Temple detail ── */
-.detail-header { text-align: center; padding: 32px 0 24px; }
+.detail-hero { text-align: center; padding: 28px 0 20px; }
 .detail-num { font-size: 13px; color: var(--text3); letter-spacing: 0.06em; }
-.detail-name { font-size: 26px; font-weight: 900; margin-top: 6px; letter-spacing: 0.04em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
-.detail-name.empty { color: var(--text3); font-size: 18px; }
-.detail-dojo { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 10px; }
-.detail-honzon { font-size: 13px; color: var(--text2); margin-top: 12px; text-align: center; }
-.detail-visited { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
-.detail-visited-date { font-size: 12px; color: var(--text2); }
-.detail-visited-note { font-size: 14px; margin-top: 6px; }
-.detail-stamp { width: 72px; height: 72px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; color: #0f0f0f; margin: 20px auto 8px; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.detail-name { font-size: 24px; font-weight: 900; margin-top: 6px; letter-spacing: 0.04em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.detail-name.empty { color: var(--text3); font-size: 16px; font-style: italic; }
+.detail-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 10px; }
+.detail-stamp { width: 68px; height: 68px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; color: #0f0f0f; margin: 18px auto 6px; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.visit-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 14px; }
+.visit-date { font-size: 12px; color: var(--text2); }
+.visit-note { font-size: 14px; margin-top: 6px; }
 
-/* ── Buttons ── */
-.btn { display: flex; align-items: center; justify-content: center; width: 100%; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 800; cursor: pointer; transition: opacity 0.15s, transform 0.1s; font-family: inherit; letter-spacing: 0.03em; }
-.btn:active { opacity: 0.82; transform: scale(0.98); }
-.btn-primary { background: var(--gold); color: #0f0f0f; }
-.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); font-weight: 600; }
-.btn-danger { background: transparent; color: #c05050; border: 1px solid rgba(192,80,80,0.25); font-weight: 600; }
-.btn-sm { font-size: 14px; padding: 11px; }
-
-/* ── Breathe screen ── */
-.breathe-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65dvh; text-align: center; }
-.breathe-title { font-size: 15px; color: var(--text2); margin-bottom: 40px; line-height: 2; }
-.breathe-circle { width: 120px; height: 120px; border-radius: 50%; border: 1.5px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; }
+/* ── Breathe ── */
+.breathe-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60dvh; text-align: center; }
+.breathe-msg { font-size: 15px; color: var(--text2); margin-bottom: 40px; line-height: 2.1; }
+.breathe-ring { width: 110px; height: 110px; border-radius: 50%; border: 1.5px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; margin-bottom: 40px; animation: breathe 4.5s ease-in-out infinite; }
 @keyframes breathe {
-  0%, 100% { transform: scale(1); border-color: var(--gold-dim); }
-  50% { transform: scale(1.12); border-color: var(--gold); }
+  0%,100% { transform: scale(1); border-color: var(--gold-dim); }
+  50%      { transform: scale(1.1); border-color: var(--gold); }
 }
-@media (prefers-reduced-motion: reduce) { .breathe-circle { animation: none; } }
-.breathe-inner { width: 40px; height: 40px; border-radius: 50%; background: var(--gold-soft); border: 1px solid var(--gold-dim); }
+.breathe-dot { width: 36px; height: 36px; border-radius: 50%; background: var(--gold-soft); border: 1px solid var(--gold-dim); }
 
-/* ── Note screen ── */
-.note-heading { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 20px; line-height: 2; }
-.note-field { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; padding: 14px; outline: none; font-family: inherit; resize: none; height: 120px; line-height: 1.7; transition: border-color 0.15s; }
+/* ── Note ── */
+.note-msg { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 18px; line-height: 2.0; }
+.note-field { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; padding: 14px; outline: none; font-family: inherit; resize: none; height: 120px; line-height: 1.7; }
 .note-field:focus { border-color: var(--gold-dim); }
-.note-char { text-align: right; font-size: 11px; color: var(--text3); margin-top: 6px; }
+.note-char { text-align: right; font-size: 11px; color: var(--text3); margin-top: 5px; }
 
 /* ── 納経帳 ── */
-.kecho-intro { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 20px; line-height: 1.9; }
-.kecho-dojo { margin-bottom: 24px; }
-.kecho-dojo-name { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; margin-bottom: 10px; }
-.kecho-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
-.kecho-cell { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: var(--text3); cursor: pointer; transition: background 0.25s, border-color 0.25s, color 0.25s; position: relative; }
-.kecho-cell:active { opacity: 0.7; }
-.kecho-cell.visited { background: var(--gold); border-color: var(--gold); color: #0f0f0f; font-family: "Noto Serif JP", "Yu Mincho", serif; }
-.kecho-cell .cell-num { font-size: 8px; position: absolute; top: 3px; left: 0; right: 0; text-align: center; opacity: 0.6; }
-.kecho-cell.visited .cell-num { opacity: 0; }
-.kecho-total { text-align: center; margin-top: 10px; font-size: 12px; color: var(--text3); }
+.kecho-msg { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 18px; line-height: 1.9; }
+.kecho-sec { margin-bottom: 22px; }
+.kecho-sec-name { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; margin-bottom: 9px; }
+.kecho-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.kecho-cell { aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: var(--text3); cursor: pointer; transition: background 0.25s, border-color 0.25s, color 0.25s; position: relative; }
+.kecho-cell:active { opacity: 0.65; }
+.kecho-cell.v { background: var(--gold); border-color: var(--gold); color: #0f0f0f; font-family: "Noto Serif JP", "Yu Mincho", serif; font-size: 12px; }
+.kecho-num { font-size: 8px; position: absolute; top: 3px; left: 0; right: 0; text-align: center; opacity: 0.55; }
+.kecho-cell.v .kecho-num { display: none; }
+.kecho-total { text-align: center; font-size: 12px; color: var(--text3); margin-top: 8px; }
 
 /* ── 結願 ── */
-.kechigan { text-align: center; padding: 32px 0; border: 1px solid var(--gold-dim); border-radius: 16px; margin-bottom: 20px; }
-.kechigan-mark { font-size: 40px; font-family: "Noto Serif JP", "Yu Mincho", serif; font-weight: 900; color: var(--gold); }
-.kechigan-title { font-size: 20px; font-weight: 800; margin-top: 12px; letter-spacing: 0.06em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
-.kechigan-desc { font-size: 13px; color: var(--text2); margin-top: 12px; line-height: 1.9; padding: 0 16px; }
+.kechigan { text-align: center; padding: 28px 16px; border: 1px solid var(--gold-dim); border-radius: 16px; margin-bottom: 20px; }
+.kechigan-kanji { font-size: 36px; font-weight: 900; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.kechigan-title { font-size: 18px; font-weight: 800; margin-top: 10px; letter-spacing: 0.05em; font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.kechigan-desc { font-size: 13px; color: var(--text2); margin-top: 12px; line-height: 1.9; }
+
+/* ── 霊場管理 ── */
+.route-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; margin-bottom: 10px; }
+.route-card.active-route { border-color: var(--gold-dim); background: var(--gold-soft); }
+.route-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.route-card-name { font-size: 16px; font-weight: 800; }
+.route-card-meta { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.route-badge { font-size: 11px; font-weight: 700; color: var(--gold); background: var(--gold-soft); border: 1px solid var(--gold-dim); border-radius: 6px; padding: 2px 8px; white-space: nowrap; flex-shrink: 0; }
+.route-progress { height: 2px; background: var(--border); border-radius: 1px; margin: 12px 0; overflow: hidden; }
+.route-progress-fill { height: 100%; background: var(--gold); border-radius: 1px; }
+.route-card-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* ── 霊場追加フォーム ── */
+.add-route-tip { font-size: 13px; color: var(--text2); line-height: 1.9; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+
+/* ── Buttons ── */
+.btn { display: flex; align-items: center; justify-content: center; width: 100%; border: none; border-radius: 13px; padding: 13px; font-size: 15px; font-weight: 800; cursor: pointer; transition: opacity 0.15s, transform 0.1s; font-family: inherit; letter-spacing: 0.02em; }
+.btn:active { opacity: 0.8; transform: scale(0.98); }
+.btn-primary { background: var(--gold); color: #0f0f0f; }
+.btn-ghost   { background: transparent; color: var(--text2); border: 1px solid var(--border); font-weight: 600; }
+.btn-danger  { background: transparent; color: #c05050; border: 1px solid var(--red-dim); font-weight: 600; }
+.btn-sm      { font-size: 13px; padding: 9px 14px; border-radius: 10px; width: auto; }
+
+/* ── Form ── */
+.form-lbl { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 7px; }
+.form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; color: var(--text); font-size: 16px; padding: 12px 14px; outline: none; font-family: inherit; transition: border-color 0.15s; }
+.form-input:focus { border-color: var(--gold-dim); }
+.form-input.err { border-color: #c05050; }
+.form-row { margin-bottom: 18px; }
+.form-hint { font-size: 12px; color: var(--text3); margin-top: 5px; }
 
 /* ── ことわり ── */
-.disclaimer { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; font-size: 13px; color: var(--text2); line-height: 2.0; }
-.disclaimer-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 12px; letter-spacing: 0.04em; }
-
-/* ── Terms first launch ── */
-.terms-hero { text-align: center; padding: 40px 0 28px; }
-.terms-logo { font-size: 36px; font-weight: 900; letter-spacing: 0.12em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
-.terms-tagline { font-size: 13px; color: var(--text3); margin-top: 8px; }
-.terms-sub { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 18px; line-height: 1.9; }
+.disclaimer { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; font-size: 13px; color: var(--text2); line-height: 2.0; }
+.disclaimer h3 { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
 
 /* ── Misc ── */
-.section-lbl { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; margin: 24px 0 10px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 12px; }
-.row { margin-bottom: 14px; }
-button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-a:focus-visible { outline: 2px solid var(--gold); }
+.sec-lbl { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; margin: 22px 0 10px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.terms-hero { text-align: center; padding: 40px 0 26px; }
+.terms-logo { font-size: 34px; font-weight: 900; letter-spacing: 0.12em; color: var(--gold); font-family: "Noto Serif JP", "Yu Mincho", serif; }
+.terms-tag  { font-size: 13px; color: var(--text3); margin-top: 8px; }
+.row-btns { display: flex; flex-direction: column; gap: 10px; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -146,11 +165,12 @@ a:focus-visible { outline: 2px solid var(--gold); }
 <script>
 'use strict';
 
-/* ── Temple data ──
+/* ─────────────────────────────────────
+   四国八十八ヶ所 組み込みデータ
    出典：四国八十八ヶ所霊場会公式情報に基づく
-   HONZON は任意。人間が公式情報から確認・追記すること。
-   ────────────────────────────────── */
-const NAMES = {
+   HONZON は人間が公式情報から確認・追記すること
+   ───────────────────────────────────── */
+const S88_NAMES = {
    1:'霊山寺',   2:'極楽寺',   3:'金泉寺',   4:'大日寺',   5:'地蔵寺',
    6:'安楽寺',   7:'十楽寺',   8:'熊谷寺',   9:'法輪寺',  10:'切幡寺',
   11:'藤井寺',  12:'焼山寺',  13:'大日寺',  14:'常楽寺',  15:'国分寺',
@@ -170,33 +190,115 @@ const NAMES = {
   81:'白峯寺',  82:'根香寺',  83:'一宮寺',  84:'屋島寺',  85:'八栗寺',
   86:'志度寺',  87:'長尾寺',  88:'大窪寺',
 };
-
-/* 本尊 — 人間が公式情報から確認・追記してください */
-const HONZON = {
-  /* 例: 1:'釈迦如来', 2:'阿弥陀如来', ... */
-};
-
-const DOJOS = [
-  { name:'発心', kana:'ほっしん', pref:'阿波・徳島', start:1,  end:23 },
+const S88_HONZON = { /* 人間が公式情報から確認・追記してください */ };
+const S88_DOJOS = [
+  { name:'発心', kana:'ほっしん',  pref:'阿波・徳島', start:1,  end:23 },
   { name:'修行', kana:'しゅぎょう', pref:'土佐・高知', start:24, end:39 },
-  { name:'菩提', kana:'ぼだい',  pref:'伊予・愛媛', start:40, end:65 },
-  { name:'涅槃', kana:'ねはん',  pref:'讃岐・香川', start:66, end:88 },
+  { name:'菩提', kana:'ぼだい',   pref:'伊予・愛媛', start:40, end:65 },
+  { name:'涅槃', kana:'ねはん',   pref:'讃岐・香川', start:66, end:88 },
 ];
 
-function dojoOf(n) {
-  return DOJOS.find(d => n >= d.start && n <= d.end) || DOJOS[0];
-}
+/* 組み込み霊場の静的設定 */
+const BUILTIN = {
+  shikoku88: {
+    id: 'shikoku88',
+    name: '四国八十八ヶ所',
+    short: '四国',
+    count: 88,
+    dojos: S88_DOJOS,
+    names: S88_NAMES,
+    honzon: S88_HONZON,
+    kechigan: {
+      title: '結願',
+      desc: 'お礼参りとして、高野山奥の院（和歌山県高野町）へのお参りが伝統とされています。弘法大師空海が今もご入定されているとされる聖地です。四国霊場会の公式案内をご参照ください。',
+    },
+  },
+};
 
-/* ── Storage ── */
+/* ── State ── */
 const STORAGE = 'sando_v1';
 const TERMS_VER = 1;
-let state = { termsVer: 0, visits: {} };
+
+/* デフォルト */
+let state = {
+  termsVer: 0,
+  activeRoute: 'shikoku88',
+  routes: {
+    shikoku88: { visits: {} },
+  },
+};
 
 function loadState() {
-  try { const r = localStorage.getItem(STORAGE); if (r) state = { ...state, ...JSON.parse(r) }; } catch {}
+  try {
+    const raw = localStorage.getItem(STORAGE);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    /* v1→v2 マイグレーション: visits が routes の外にあった旧形式 */
+    if (saved.visits && !saved.routes) {
+      saved.routes = { shikoku88: { visits: saved.visits } };
+      delete saved.visits;
+    }
+    state = { ...state, ...saved };
+    /* 組み込み霊場の visits キーを補完 */
+    if (!state.routes.shikoku88) state.routes.shikoku88 = { visits: {} };
+  } catch {}
 }
+
 function saveState() {
   try { localStorage.setItem(STORAGE, JSON.stringify(state)); } catch {}
+}
+
+/* ── Route helpers ── */
+function getRouteConfig(id) {
+  if (BUILTIN[id]) return BUILTIN[id];
+  const r = state.routes[id];
+  return r ? { id, name: r.name, short: r.short || r.name, count: r.count, dojos: [], names: r.names || {}, honzon: {}, kechigan: null } : null;
+}
+
+function activeConfig() { return getRouteConfig(state.activeRoute); }
+function activeVisits() { return state.routes[state.activeRoute]?.visits || {}; }
+function isVisited(n) { return !!activeVisits()[n]; }
+function countVisited() { return Object.keys(activeVisits()).length; }
+function maxCount() { return activeConfig()?.count || 88; }
+
+function dojoOf(cfg, n) {
+  if (!cfg?.dojos?.length) return null;
+  return cfg.dojos.find(d => n >= d.start && n <= d.end) || null;
+}
+
+function templName(cfg, n) {
+  return cfg?.names?.[n] || null;
+}
+
+function recordVisit(n, note) {
+  if (!state.routes[state.activeRoute]) return;
+  state.routes[state.activeRoute].visits[n] = { date: new Date().toISOString().slice(0,10), note: note || '' };
+  saveState();
+}
+function removeVisit(n) {
+  if (!state.routes[state.activeRoute]) return;
+  delete state.routes[state.activeRoute].visits[n];
+  saveState();
+}
+
+function addCustomRoute(name, count) {
+  const id = 'r_' + Date.now().toString(36);
+  state.routes[id] = { name, short: name.slice(0,6), count: Number(count), names: {}, visits: {} };
+  saveState();
+  return id;
+}
+
+function deleteRoute(id) {
+  if (BUILTIN[id]) return; /* 組み込みは削除不可 */
+  delete state.routes[id];
+  if (state.activeRoute === id) state.activeRoute = 'shikoku88';
+  saveState();
+}
+
+function switchRoute(id) {
+  if (!state.routes[id]) return;
+  state.activeRoute = id;
+  saveState();
 }
 
 /* ── Helpers ── */
@@ -205,36 +307,24 @@ function fmtDate(iso) {
   const d = new Date(iso);
   return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
 }
-function totalVisited() { return Object.keys(state.visits).length; }
-function isVisited(n) { return !!state.visits[n]; }
-
-function recordVisit(n, note) {
-  state.visits[n] = { date: new Date().toISOString().slice(0,10), note: note || '' };
-  saveState();
-}
-function removeVisit(n) {
-  delete state.visits[n];
-  saveState();
-}
-
-/* ── Navigation ── */
-let view = { tab: 'list', screen: 'list', templeN: null, flowNote: '' };
-
-function go(screen, opts) {
-  view = { ...view, screen, ...(opts||{}) };
-  render();
-}
-function goTab(tab) {
-  view = { ...view, tab, screen: tab, templeN: null };
-  render();
-}
-
-/* ── Escape ── */
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+function uid() { return 'r_' + Date.now().toString(36) + Math.random().toString(36).slice(2,5); }
 
-/* ── Main render ── */
+/* ── Navigation ── */
+let view = { tab: 'list', screen: 'list', templeN: null };
+
+function go(screen, opts) {
+  view = { ...view, screen, ...(opts || {}) };
+  render();
+}
+function goTab(tab) {
+  view = { tab, screen: tab, templeN: null };
+  render();
+}
+
+/* ── Render ── */
 function render() {
   const app = document.getElementById('app');
   if (state.termsVer < TERMS_VER) { app.innerHTML = screenTerms(); return; }
@@ -242,6 +332,8 @@ function render() {
     case 'list':     app.innerHTML = screenList(); break;
     case 'stamp':    app.innerHTML = screenStamp(); break;
     case 'disc':     app.innerHTML = screenDisc(); break;
+    case 'routes':   app.innerHTML = screenRoutes(); break;
+    case 'addRoute': app.innerHTML = screenAddRoute(); break;
     case 'temple':   app.innerHTML = screenTemple(view.templeN); break;
     case 'breathe':  app.innerHTML = screenBreathe(view.templeN); break;
     case 'note':     app.innerHTML = screenNote(view.templeN); break;
@@ -250,15 +342,14 @@ function render() {
   }
 }
 
-/* ── Nav HTML ── */
-function navHTML() {
-  const t = view.tab;
+/* ── Nav ── */
+function navHTML(tab) {
+  const t = tab || view.tab;
   return `
-    <nav class="bottomnav" role="navigation" aria-label="メインナビゲーション">
+    <nav class="bottomnav">
       <button class="nav-btn${t==='list'?' active':''}" onclick="goTab('list')" aria-label="札所一覧">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-          <line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
           <circle cx="3.5" cy="6" r="1.5" fill="currentColor" stroke="none"/>
           <circle cx="3.5" cy="12" r="1.5" fill="currentColor" stroke="none"/>
           <circle cx="3.5" cy="18" r="1.5" fill="currentColor" stroke="none"/>
@@ -272,6 +363,13 @@ function navHTML() {
         </svg>
         納経帳
       </button>
+      <button class="nav-btn${t==='routes'?' active':''}" onclick="goTab('routes')" aria-label="霊場">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6l4-3 6 3 4-3 4 3v15l-4-3-6 3-4-3-4 3V6z"/>
+          <line x1="7" y1="3" x2="7" y2="18"/><line x1="13" y1="6" x2="13" y2="21"/>
+        </svg>
+        霊場
+      </button>
       <button class="nav-btn${t==='disc'?' active':''}" onclick="goTab('disc')" aria-label="ことわり">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="12" r="9"/>
@@ -283,287 +381,372 @@ function navHTML() {
     </nav>`;
 }
 
-/* ── Terms (初回) ── */
+function topbarHTML(opts) {
+  const cfg = activeConfig();
+  const showRoute = opts?.showRoute !== false;
+  const backBtn = opts?.back ? `<button class="top-btn" onclick="go('${opts.back}',${opts.backOpts||'{}'})" aria-label="戻る">‹</button>` : `<span class="topbar-logo">参道</span>`;
+  const routeBtn = showRoute ? `<button class="topbar-route" onclick="goTab('routes')" aria-label="霊場を切り替える"><span class="topbar-route-name">${esc(cfg?.name||'霊場未選択')}</span> ▾</button>` : `<span></span>`;
+  const right = opts?.right || `<span class="topbar-sub">${countVisited()} / ${maxCount()}</span>`;
+  return `<div class="topbar">${backBtn}${routeBtn}${right}</div>`;
+}
+
+/* ── Terms ── */
 function screenTerms() {
   return `
     <div class="topbar"><span class="topbar-logo">参道</span><span></span><span></span></div>
     <div class="screen">
       <div class="terms-hero">
         <div class="terms-logo">参道</div>
-        <div class="terms-tagline">同行二人。ひとりではなく。</div>
+        <div class="terms-tag">同行二人。ひとりではなく。</div>
       </div>
-      <p class="terms-sub">四国八十八ヶ所を巡る、物理巡礼の同行アプリです。<br>記録と連れ。参拝の代わりではありません。</p>
-      <div class="disclaimer" style="margin-bottom:20px">
-        <div class="disclaimer-title">ことわり</div>
-        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は四国八十八ヶ所霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
+      <p style="font-size:14px;color:var(--text2);text-align:center;margin-bottom:18px;line-height:1.9">四国八十八ヶ所をはじめ、各地の霊場を巡る<br>物理巡礼の同行アプリです。</p>
+      <div class="disclaimer" style="margin-bottom:18px">
+        <h3>ことわり</h3>
+        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は各霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
       </div>
       <button class="btn btn-primary" onclick="agreeTerms()">同行をはじめる</button>
     </div>`;
 }
-
 function agreeTerms() { state.termsVer = TERMS_VER; saveState(); go('list'); }
 
 /* ── 札所一覧 ── */
 function screenList() {
-  const total = totalVisited();
-  const currentDojo = DOJOS.find(d => {
-    for (let n = d.start; n <= d.end; n++) if (!isVisited(n)) return true;
-    return false;
-  }) || DOJOS[3];
+  const cfg = activeConfig();
+  if (!cfg) return `${topbarHTML()}<div class="screen"><p style="color:var(--text3);text-align:center;padding:40px 0">霊場が選ばれていません。<br><button class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-flex" onclick="goTab('routes')">霊場を選ぶ</button></p></div>${navHTML()}`;
 
-  const dojoBlocks = DOJOS.map(d => {
-    let visited = 0;
-    const rows = [];
-    for (let n = d.start; n <= d.end; n++) {
-      const name = NAMES[n];
-      const v = isVisited(n);
-      if (v) visited++;
-      rows.push(`
-        <div class="temple-row" onclick="go('temple',{templeN:${n}})" tabindex="0"
-             onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})"
-             role="button" aria-label="第${n}番 ${name||'札所名未入力'}${v?'（参拝済み）':''}">
+  const visits = activeVisits();
+  let blocks = '';
+
+  if (cfg.dojos?.length) {
+    /* 道場あり：グループ表示 */
+    blocks = cfg.dojos.map(d => {
+      let visited = 0;
+      let rows = '';
+      for (let n = d.start; n <= d.end; n++) {
+        const name = templName(cfg, n);
+        const v = !!visits[n];
+        if (v) visited++;
+        rows += `<div class="temple-row" onclick="go('temple',{templeN:${n}})" tabindex="0" onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})" role="button">
           <span class="temple-num">${n}</span>
-          <span class="temple-mark${v?' visited':''}">納</span>
-          <span class="temple-name-wrap">
-            <span class="temple-name${name?'':' empty'}">${name ? esc(name) : '（札所名 未入力）'}</span>
-          </span>
+          <span class="temple-mark${v?' v':''}">納</span>
+          <span class="temple-name${name?'':' empty'}">${name ? esc(name) : '（札所名 未入力）'}</span>
           <span class="temple-arrow">›</span>
-        </div>`);
-    }
-    const pct = Math.round(visited / (d.end - d.start + 1) * 100);
-    return `
-      <div class="dojo-section">
+        </div>`;
+      }
+      const total = d.end - d.start + 1;
+      const pct = Math.round(visited / total * 100);
+      return `<div class="dojo-section">
         <div class="dojo-head">
-          <span class="dojo-name">${d.name}</span>
+          <span class="dojo-name">${esc(d.name)}</span>
           <span class="dojo-kana">の道場</span>
-          <span class="dojo-pref">${d.pref}</span>
+          <span class="dojo-pref">${esc(d.pref||'')}</span>
         </div>
-        <div class="dojo-progress" role="progressbar" aria-valuenow="${visited}" aria-valuemax="${d.end-d.start+1}" aria-label="${d.name}の道場 ${visited}/${d.end-d.start+1}">
-          <div class="dojo-progress-bar" style="width:${pct}%"></div>
-        </div>
-        ${rows.join('')}
+        <div class="dojo-bar"><div class="dojo-bar-fill" style="width:${pct}%"></div></div>
+        ${rows}
       </div>`;
-  }).join('');
+    }).join('');
+  } else {
+    /* 道場なし：フラット表示 */
+    let rows = '';
+    for (let n = 1; n <= cfg.count; n++) {
+      const name = templName(cfg, n);
+      const v = !!visits[n];
+      rows += `<div class="temple-row" onclick="go('temple',{templeN:${n}})" tabindex="0" onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})" role="button">
+        <span class="temple-num">${n}</span>
+        <span class="temple-mark${v?' v':''}">納</span>
+        <span class="temple-name${name?'':' empty'}">${name ? esc(name) : `第${n}番`}</span>
+        <span class="temple-arrow">›</span>
+      </div>`;
+    }
+    const pct = Math.round(countVisited() / cfg.count * 100);
+    blocks = `<div class="dojo-section">
+      <div class="dojo-bar"><div class="dojo-bar-fill" style="width:${pct}%"></div></div>
+      ${rows}
+    </div>`;
+  }
 
   return `
-    <div class="topbar">
-      <span class="topbar-logo">参道</span>
-      <span></span>
-      <span class="topbar-sub">${total} / 88</span>
-    </div>
+    ${topbarHTML()}
     <div class="screen">
-      ${total === 0 ? `<p style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px;line-height:1.9">同行二人。ひとりではなく、ご一緒しましょう。<br>お参りした寺院を記録してください。</p>` : ''}
-      ${dojoBlocks}
+      ${countVisited() === 0 ? `<p style="font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px;line-height:1.9">同行二人。ひとりではなく、ご一緒しましょう。</p>` : ''}
+      ${blocks}
     </div>
-    ${navHTML()}`;
+    ${navHTML('list')}`;
 }
 
 /* ── 札所詳細 ── */
 function screenTemple(n) {
-  const name = NAMES[n];
-  const honzon = HONZON[n];
-  const dojo = dojoOf(n);
-  const v = state.visits[n];
+  const cfg = activeConfig();
+  const name = templName(cfg, n);
+  const honzon = cfg?.honzon?.[n];
+  const dojo = dojoOf(cfg, n);
+  const v = activeVisits()[n];
 
-  const visitedBlock = v ? `
-    <div style="text-align:center;margin-top:8px">
-      <div class="detail-stamp">納</div>
-      <div style="font-size:12px;color:var(--text3)">${fmtDate(v.date)}</div>
-    </div>
-    ${v.note ? `<div class="detail-visited" style="margin-top:14px"><div class="detail-visited-note">${esc(v.note)}</div></div>` : ''}
-    <div style="margin-top:24px">
-      <button class="btn btn-ghost btn-sm" onclick="go('breathe',{templeN:${n}})">もう一度 お参りする</button>
-    </div>
-    <div style="margin-top:10px">
-      <button class="btn btn-danger btn-sm" onclick="confirmRemove(${n})">参拝を取り消す</button>
-    </div>` : `
-    <div style="margin-top:28px">
-      <button class="btn btn-primary" onclick="go('breathe',{templeN:${n}})">お参りする</button>
-    </div>`;
+  const visitBlock = v
+    ? `<div style="text-align:center;margin-top:6px">
+        <div class="detail-stamp">納</div>
+        <div style="font-size:12px;color:var(--text3)">${fmtDate(v.date)}</div>
+      </div>
+      ${v.note ? `<div class="visit-box"><div class="visit-note">${esc(v.note)}</div></div>` : ''}
+      <div class="row-btns" style="margin-top:22px">
+        <button class="btn btn-ghost" onclick="go('breathe',{templeN:${n}})">もう一度 お参りする</button>
+        <button class="btn btn-danger" onclick="confirmRemove(${n})">参拝を取り消す</button>
+      </div>`
+    : `<div style="margin-top:26px">
+        <button class="btn btn-primary" onclick="go('breathe',{templeN:${n}})">お参りする</button>
+      </div>`;
 
   return `
-    <div class="topbar">
-      <button class="top-btn" onclick="go('list')" aria-label="一覧に戻る">‹</button>
-      <span class="topbar-sub">第${n}番札所</span>
-      <span></span>
-    </div>
+    ${topbarHTML({ back: 'list', backOpts: '{}', showRoute: false, right: `<span class="topbar-sub">第${n}番</span>` })}
     <div class="screen">
-      <div class="detail-header">
+      <div class="detail-hero">
         <div class="detail-num">第 ${n} 番</div>
         <div class="detail-name${name?'':' empty'}">${name ? esc(name) : '（札所名 未入力）'}</div>
         <div style="margin-top:8px">
-          <span class="detail-dojo">${dojo.name}の道場・${dojo.pref}</span>
+          ${dojo ? `<span class="detail-badge">${esc(dojo.name)}の道場・${esc(dojo.pref||'')}</span>` : cfg ? `<span class="detail-badge">${esc(cfg.name)}</span>` : ''}
         </div>
-        ${honzon ? `<div class="detail-honzon">本尊：${esc(honzon)}</div>` : ''}
+        ${honzon ? `<div style="font-size:13px;color:var(--text2);margin-top:10px">本尊：${esc(honzon)}</div>` : ''}
       </div>
-      ${visitedBlock}
+      ${visitBlock}
     </div>`;
 }
 
 function confirmRemove(n) {
-  const name = NAMES[n] || `第${n}番`;
-  if (confirm(`${name}の参拝記録を取り消しますか？`)) {
-    removeVisit(n);
-    go('temple', { templeN: n });
-  }
+  const cfg = activeConfig();
+  const name = templName(cfg, n) || `第${n}番`;
+  if (confirm(`${name}の参拝記録を取り消しますか？`)) { removeVisit(n); go('temple', { templeN: n }); }
 }
 
 /* ── 一呼吸 ── */
 function screenBreathe(n) {
-  const name = NAMES[n];
+  const name = templName(activeConfig(), n);
   return `
-    <div class="topbar">
-      <button class="top-btn" onclick="go('temple',{templeN:${n}})" aria-label="戻る">‹</button>
-      <span class="topbar-sub">第${n}番 ${name ? esc(name) : ''}</span>
-      <span></span>
-    </div>
+    ${topbarHTML({ back: 'temple', backOpts: `{templeN:${n}}`, showRoute: false, right: '' })}
     <div class="screen">
       <div class="breathe-wrap">
-        <p class="breathe-title">お参りの前に、<br>ひとつ呼吸をおいて。</p>
-        <div class="breathe-circle" aria-hidden="true">
-          <div class="breathe-inner"></div>
-        </div>
-        <button class="btn btn-primary" style="max-width:200px" onclick="go('note',{templeN:${n}})">おく</button>
+        <p class="breathe-msg">お参りの前に、<br>ひとつ呼吸をおいて。</p>
+        <div class="breathe-ring" aria-hidden="true"><div class="breathe-dot"></div></div>
+        <button class="btn btn-primary" style="max-width:180px" onclick="go('note',{templeN:${n}})">おく</button>
       </div>
     </div>`;
 }
 
 /* ── 一言記帳 ── */
 function screenNote(n) {
-  const name = NAMES[n];
   return `
-    <div class="topbar">
-      <button class="top-btn" onclick="go('breathe',{templeN:${n}})" aria-label="戻る">‹</button>
-      <span class="topbar-sub">第${n}番 ${name ? esc(name) : ''}</span>
-      <span></span>
-    </div>
+    ${topbarHTML({ back: 'breathe', backOpts: `{templeN:${n}}`, showRoute: false, right: '' })}
     <div class="screen">
-      <p class="note-heading">ひとこと、記帳する。<br><span style="font-size:12px">書かなくても構いません。</span></p>
-      <textarea class="note-field" id="note-field" maxlength="200" placeholder="ひとこと（任意）" oninput="updateChar()" aria-label="一言記帳"></textarea>
+      <p class="note-msg">ひとこと、記帳する。<br><span style="font-size:12px;color:var(--text3)">書かなくても構いません。</span></p>
+      <textarea class="note-field" id="note-field" maxlength="200" placeholder="ひとこと（任意）" oninput="updChar()" aria-label="一言記帳"></textarea>
       <div class="note-char" id="note-char">0 / 200</div>
-      <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" onclick="submitNote(${n}, true)">参拝した</button>
-        <button class="btn btn-ghost btn-sm" onclick="submitNote(${n}, false)">何も書かず参拝する</button>
+      <div class="row-btns" style="margin-top:18px">
+        <button class="btn btn-primary" onclick="submitNote(${n},true)">参拝した</button>
+        <button class="btn btn-ghost" style="font-size:13px" onclick="submitNote(${n},false)">何も書かず参拝する</button>
       </div>
     </div>`;
 }
-
-function updateChar() {
-  const f = document.getElementById('note-field');
-  const c = document.getElementById('note-char');
-  if (f && c) c.textContent = `${f.value.length} / 200`;
-}
-
+function updChar() { const f=document.getElementById('note-field'),c=document.getElementById('note-char'); if(f&&c)c.textContent=`${f.value.length} / 200`; }
 function submitNote(n, withNote) {
-  const note = withNote ? (document.getElementById('note-field')?.value.trim() || '') : '';
+  const note = withNote ? (document.getElementById('note-field')?.value.trim()||'') : '';
   recordVisit(n, note);
   go('done', { templeN: n });
 }
 
 /* ── 完了 ── */
 function screenDone(n) {
-  const name = NAMES[n];
-  const total = totalVisited();
-  const isKechigan = total === 88;
-  const dojo = dojoOf(n);
-
-  const dojoVisited = [];
-  for (let i = dojo.start; i <= dojo.end; i++) if (isVisited(i)) dojoVisited.push(i);
-  const dojoComplete = dojoVisited.length === (dojo.end - dojo.start + 1);
+  const cfg = activeConfig();
+  const name = templName(cfg, n);
+  const total = countVisited();
+  const max   = maxCount();
+  const done  = total === max;
+  const dojo  = dojoOf(cfg, n);
+  const dojoFull = dojo && Array.from({length:dojo.end-dojo.start+1},(_,i)=>dojo.start+i).every(i=>!!activeVisits()[i]);
 
   return `
-    <div class="topbar">
-      <span class="topbar-logo">参道</span><span></span><span></span>
-    </div>
-    <div class="screen" style="text-align:center;padding-top:32px">
-      <div class="detail-stamp" style="margin:0 auto 16px">納</div>
-      <div style="font-size:18px;font-weight:800;letter-spacing:0.04em">${name ? esc(name) : `第${n}番`}</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:6px">第 ${n} 番</div>
-      ${dojoComplete && !isKechigan ? `<p style="font-size:13px;color:var(--gold);margin-top:18px;line-height:1.9">${dojo.name}の道場、満ちました。</p>` : ''}
-      ${isKechigan ? kechiganHTML() : ''}
-      <div style="margin-top:32px;display:flex;flex-direction:column;gap:10px">
+    ${topbarHTML({ showRoute: false, right: '' })}
+    <div class="screen" style="text-align:center;padding-top:28px">
+      <div class="detail-stamp" style="margin:0 auto 14px">納</div>
+      <div style="font-size:17px;font-weight:800;letter-spacing:0.04em">${name ? esc(name) : `第${n}番`}</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:4px">第 ${n} 番</div>
+      ${dojoFull && !done && dojo ? `<p style="font-size:13px;color:var(--gold);margin-top:16px;line-height:1.9">${esc(dojo.name)}の道場、満ちました。</p>` : ''}
+      ${done ? kechiganHTML(cfg) : ''}
+      <div class="row-btns" style="margin-top:28px">
         <button class="btn btn-primary" onclick="go('temple',{templeN:${n}})">札所詳細へ</button>
-        <button class="btn btn-ghost btn-sm" onclick="goTab('list')">一覧に戻る</button>
+        <button class="btn btn-ghost" onclick="goTab('list')">一覧に戻る</button>
       </div>
     </div>
     ${navHTML()}`;
 }
 
-function kechiganHTML() {
-  return `
-    <div class="kechigan" style="margin-top:24px">
-      <div class="kechigan-mark">結願</div>
-      <div class="kechigan-title">八十八ヶ所、満ちました。</div>
-      <p class="kechigan-desc">お礼参りとして、高野山奥の院（和歌山県高野町）へのお参りが伝統とされています。弘法大師空海が今もご入定されているとされる聖地です。四国霊場会の公式案内をご参照ください。</p>
-    </div>`;
+function kechiganHTML(cfg) {
+  const k = cfg?.kechigan;
+  if (!k) return `<div class="kechigan" style="margin-top:20px"><div class="kechigan-kanji">結願</div><div class="kechigan-title">すべてのお寺を、お参りしました。</div></div>`;
+  return `<div class="kechigan" style="margin-top:20px">
+    <div class="kechigan-kanji">${esc(k.title)}</div>
+    <div class="kechigan-title">${esc(cfg.name)}、満ちました。</div>
+    ${k.desc ? `<p class="kechigan-desc">${esc(k.desc)}</p>` : ''}
+  </div>`;
 }
 
 /* ── 納経帳 ── */
 function screenStamp() {
-  const total = totalVisited();
-  const isKechigan = total === 88;
+  const cfg = activeConfig();
+  const visits = activeVisits();
+  const total = countVisited();
+  const max = maxCount();
 
-  const dojoBlocks = DOJOS.map(d => {
-    let cells = '';
-    for (let n = d.start; n <= d.end; n++) {
-      const v = isVisited(n);
-      cells += `
-        <div class="kecho-cell${v?' visited':''}" onclick="go('temple',{templeN:${n}})"
-             tabindex="0" onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})"
-             role="button" aria-label="第${n}番${v?'（参拝済み）':''}">
-          ${v ? '納' : `<span class="cell-num">${n}</span>`}
+  let blocks = '';
+  if (cfg?.dojos?.length) {
+    blocks = cfg.dojos.map(d => {
+      let cells = '';
+      let dv = 0;
+      for (let n = d.start; n <= d.end; n++) {
+        const v = !!visits[n];
+        if (v) dv++;
+        cells += `<div class="kecho-cell${v?' v':''}" onclick="go('temple',{templeN:${n}})" tabindex="0" onkeydown="if(event.key==='Enter')go('temple',{templeN:${n}})" role="button" aria-label="第${n}番${v?'（参拝済み）':''}">
+          ${v ? '納' : `<span class="kecho-num">${n}</span>`}
         </div>`;
-    }
-    const dv = Array.from({length: d.end-d.start+1}, (_,i)=>d.start+i).filter(n=>isVisited(n)).length;
-    return `
-      <div class="kecho-dojo">
-        <div class="kecho-dojo-name">${d.name}の道場 — ${d.pref}　${dv}/${d.end-d.start+1}</div>
+      }
+      return `<div class="kecho-sec">
+        <div class="kecho-sec-name">${esc(d.name)}の道場 — ${esc(d.pref||'')}　${dv}/${d.end-d.start+1}</div>
         <div class="kecho-grid">${cells}</div>
       </div>`;
+    }).join('');
+  } else if (cfg) {
+    let cells = '';
+    for (let n = 1; n <= max; n++) {
+      const v = !!visits[n];
+      cells += `<div class="kecho-cell${v?' v':''}" onclick="go('temple',{templeN:${n}})" tabindex="0" role="button">
+        ${v ? '納' : `<span class="kecho-num">${n}</span>`}
+      </div>`;
+    }
+    blocks = `<div class="kecho-sec"><div class="kecho-grid">${cells}</div></div>`;
+  }
+
+  const done = total === max;
+  return `
+    ${topbarHTML()}
+    <div class="screen">
+      ${done ? kechiganHTML(cfg) : `<p class="kecho-msg">お参りした寺院が、静かに満ちていきます。</p>`}
+      ${blocks}
+      <div class="kecho-total">${total} / ${max} ヶ所</div>
+    </div>
+    ${navHTML('stamp')}`;
+}
+
+/* ── 霊場管理 ── */
+function screenRoutes() {
+  const routeCards = Object.keys(state.routes).map(id => {
+    const cfg = getRouteConfig(id);
+    if (!cfg) return '';
+    const visits = state.routes[id]?.visits || {};
+    const visited = Object.keys(visits).length;
+    const max = cfg.count;
+    const pct = Math.round(visited / max * 100);
+    const isActive = id === state.activeRoute;
+    const isBuiltin = !!BUILTIN[id];
+
+    return `<div class="route-card${isActive?' active-route':''}">
+      <div class="route-card-head">
+        <div>
+          <div class="route-card-name">${esc(cfg.name)}</div>
+          <div class="route-card-meta">${visited} / ${max} ヶ所お参りした</div>
+        </div>
+        ${isActive ? '<span class="route-badge">使用中</span>' : ''}
+      </div>
+      <div class="route-progress"><div class="route-progress-fill" style="width:${pct}%"></div></div>
+      <div class="route-card-actions">
+        ${!isActive ? `<button class="btn btn-primary btn-sm" onclick="switchAndGo('${id}')">この霊場を巡る</button>` : `<button class="btn btn-ghost btn-sm" onclick="goTab('list')">札所を見る</button>`}
+        ${!isBuiltin ? `<button class="btn btn-danger btn-sm" onclick="confirmDeleteRoute('${id}')">削除</button>` : ''}
+      </div>
+    </div>`;
   }).join('');
 
   return `
-    <div class="topbar">
-      <span class="topbar-logo">参道</span>
-      <span></span>
-      <span class="topbar-sub">${total} / 88</span>
-    </div>
+    ${topbarHTML({ showRoute: false, right: '' })}
     <div class="screen">
-      ${isKechigan ? kechiganHTML() : `<p class="kecho-intro">お参りした札所が、静かに満ちていきます。</p>`}
-      ${dojoBlocks}
-      <div class="kecho-total">${total} ヶ所 お参りしました</div>
+      <div class="sec-lbl">巡っている霊場</div>
+      ${routeCards}
+      <div style="margin-top:16px">
+        <button class="btn btn-ghost" onclick="go('addRoute')">＋ 新しい霊場を追加する</button>
+      </div>
+      <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:20px;line-height:1.9">組み込みの「四国八十八ヶ所」は削除できません。<br>追加した霊場の寺院名は、ご自身で公式情報から入力してください。</p>
     </div>
-    ${navHTML()}`;
+    ${navHTML('routes')}`;
+}
+
+function switchAndGo(id) { switchRoute(id); goTab('list'); }
+
+function confirmDeleteRoute(id) {
+  const cfg = getRouteConfig(id);
+  if (confirm(`「${cfg?.name}」を削除しますか？参拝記録もすべて消えます。`)) {
+    deleteRoute(id);
+    render();
+  }
+}
+
+/* ── 霊場追加フォーム ── */
+function screenAddRoute() {
+  return `
+    ${topbarHTML({ back: 'routes', showRoute: false, right: '' })}
+    <div class="screen">
+      <div class="add-route-tip">
+        お名前と寺院の数を入力すると、その霊場の記録を始められます。<br>
+        寺院の名前（第何番がどのお寺か）は、各霊場会の公式情報をもとにご自身で追記することができます。追加直後は「第N番」として表示されます。
+      </div>
+      <div class="form-row">
+        <label class="form-lbl" for="r-name">霊場の名前</label>
+        <input class="form-input" id="r-name" type="text" placeholder="例：北海道八十八箇所、西国三十三観音…" maxlength="40" />
+      </div>
+      <div class="form-row">
+        <label class="form-lbl" for="r-count">寺院の数</label>
+        <input class="form-input" id="r-count" type="number" placeholder="例：88" min="1" max="999" inputmode="numeric" />
+        <div class="form-hint">1〜999 のあいだで入力してください</div>
+      </div>
+      <button class="btn btn-primary" onclick="submitAddRoute()" style="margin-top:8px">追加する</button>
+    </div>`;
+}
+
+function submitAddRoute() {
+  const nameEl  = document.getElementById('r-name');
+  const countEl = document.getElementById('r-count');
+  const name  = nameEl?.value.trim();
+  const count = parseInt(countEl?.value, 10);
+  let ok = true;
+  if (!name)          { nameEl.classList.add('err');  ok = false; }
+  if (!count || count < 1 || count > 999) { countEl.classList.add('err'); ok = false; }
+  if (!ok) return;
+  const id = addCustomRoute(name, count);
+  switchRoute(id);
+  goTab('list');
 }
 
 /* ── ことわり ── */
 function screenDisc() {
   return `
-    <div class="topbar">
-      <span class="topbar-logo">参道</span><span></span><span></span>
-    </div>
+    ${topbarHTML({ showRoute: false, right: '' })}
     <div class="screen">
-      <div class="section-lbl">ことわり</div>
+      <div class="sec-lbl">ことわり</div>
       <div class="disclaimer">
-        <div class="disclaimer-title">このアプリについて</div>
-        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は四国八十八ヶ所霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
+        <h3>このアプリについて</h3>
+        これは個人の巡礼の記録です。実際の参拝・納経・御朱印に代わるものではありません。寺院の朱印や御影を複製・模倣せず、ここでの「参拝した」は、あなた自身の私的なしるしです。功徳は実際にお参りした行いにあり、このアプリが授けるものではありません。札所・本尊・作法は各霊場会と各寺院に拠ります。参拝の作法は各寺・霊場会のご案内に従ってください。記録はすべて、あなたの端末の中だけに。
       </div>
-      <div class="section-lbl" style="margin-top:24px">開発</div>
+      <div class="sec-lbl" style="margin-top:22px">開発</div>
       <div class="card" style="font-size:13px;color:var(--text2);line-height:1.9">
         Ataraxia Works — 田中志（たなかしるす）<br>
-        四国八十八ヶ所霊場会および各寺院は、このアプリと無関係です。<br>
+        各霊場会および各寺院は、このアプリと無関係です。<br>
         <span style="color:var(--text3)">© 2026 田中志 / Ataraxia Works</span>
       </div>
-      <div class="section-lbl">記録のリセット</div>
-      <button class="btn btn-danger btn-sm" onclick="confirmReset()" style="max-width:240px">すべての記録を消去する</button>
+      <div class="sec-lbl">記録のリセット</div>
+      <button class="btn btn-danger" onclick="confirmReset()" style="max-width:260px">現在の霊場の記録をすべて消去</button>
     </div>
-    ${navHTML()}`;
+    ${navHTML('disc')}`;
 }
 
 function confirmReset() {
-  if (confirm('すべての参拝記録を消去しますか？この操作は取り消せません。')) {
-    state.visits = {};
-    saveState();
+  const cfg = activeConfig();
+  if (confirm(`「${cfg?.name}」のすべての参拝記録を消去しますか？この操作は取り消せません。`)) {
+    if (state.routes[state.activeRoute]) { state.routes[state.activeRoute].visits = {}; saveState(); }
     goTab('disc');
   }
 }
